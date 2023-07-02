@@ -4,7 +4,7 @@
 # rm(list = ls())
 
 
-mypath = "D:/Toranj14011217/RFM_Churn_Toranj/"
+mypath = "D:/Dourvash1401/Projects/Mixture/RFM_Repo/RFM_Churn_Toranj/"
 setwd(mypath)
 
 # ReadData ----------------------------------------------------------------
@@ -16,9 +16,50 @@ AnarTrades <- read.csv(file = "AnarAllTrades_14010101.csv", fileEncoding = "UTF-
 
 # Calc 6 month Initial R, F, M ------------------------------------------------------------
 
-DF = AnarTrades
-DF$Value = as.numeric(AnarTrades$number_of_units) * as.numeric(AnarTrades$price)
+# if data wasn't numeric
+AnarTrades$Value = as.numeric(AnarTrades$number_of_units) * as.numeric(AnarTrades$price)
 
-DF6M <- DF %>% dplyr::filter(date_key %in% c(StartDate : EndDate))
+# Seperate 6 months as intial data
+DF6M <- AnarTrades %>% dplyr::filter(date_key %in% c(StartDate : EndDate))
+
+# if data wasn't numeric
 DF6M$buyer_code_melli <- as.numeric(DF6M$buyer_code_melli)
 DF6M$seller_code_melli <- as.numeric(DF6M$seller_code_melli)
+
+
+## R
+# 6 month grouped by buyers
+DF_RB <- DF6M %>% dplyr::group_by(buyer_code_melli) %>%
+  dplyr::summarise(minBuyDate = min(date_key), maxBuyDate = max(date_key)) %>% 
+  as.data.frame()
+
+# 6 month grouped by sellers
+DF_RS <- DF6M %>% dplyr::group_by(seller_code_melli) %>%
+  dplyr::summarise(maxDate = max(date_key)) %>% 
+  as.data.frame()
+
+# join buyers and sellers
+DF_RBS <- DF_RB %>% left_join(DF_RS, by = c("buyer_code_melli" = "seller_code_melli"))
+
+
+R_Init <- c()
+
+# calc R
+for(i in seq(nrow(DF_RBS))) {
+  R_Init[i] =  
+    ifelse(is.na(DF_RBS$maxDate[i]), 
+           which(DatesMain == EndDate) - which(DatesMain == DF_RBS$maxBuyDate[i]) + 1,
+           ifelse(DF_RBS$maxDate[i] < DF_RBS$maxBuyDate[i],
+                  which(DatesMain == EndDate) - which(DatesMain == DF_RBS$maxBuyDate[i]) + 1, 
+                  which(DatesMain == EndDate) - which(DatesMain == DF_RBS$maxDate[i]) + 1))
+  print(i)
+}
+
+R_Init_DF <- data.frame(code_melli = DF_RBS$buyer_code_melli, R_Init = R_Init)
+
+R_Init_DF$code_melli <- as.numeric(R_Init_DF$code_melli)
+
+rm(DF_RB, DF_RS, DF_RBS)
+
+
+
