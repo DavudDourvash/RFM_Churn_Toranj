@@ -89,3 +89,28 @@ colnames(F_Init_DF)[1] = "code_melli"
 rm(DF_FB,DF_FS,DF_FBS)
 
 
+## M
+# 6 month grouped by buyers
+DF_MB <- DF6M %>% dplyr::group_by(buyer_code_melli) %>%
+  dplyr::summarise(MBuy = sum(Value, na.rm = T)) %>% 
+  as.data.frame()
+
+DF_MS <- DF6M %>% dplyr::group_by(seller_code_melli) %>%
+  dplyr::summarise(MSell = sum(Value, na.rm = T)) %>% 
+  as.data.frame()
+
+
+DF_MBS <- DF_MB %>% left_join(DF_MS, by = c("buyer_code_melli" = "seller_code_melli"))
+
+DF_MBS$buyer_code_melli <- as.numeric(DF_MBS$buyer_code_melli)
+
+DF_MBS <- DF_MBS %>% dplyr::group_by(buyer_code_melli) %>%
+  dplyr::summarise(MBuy = sum(MBuy,na.rm = T), MSell = sum(MSell, na.rm = T))
+
+
+M_Init_DF <- DF_MBS
+
+colnames(M_Init_DF)[1] = "code_melli"
+
+rm(DF_MB,DF_MS,DF_MBS)
+
