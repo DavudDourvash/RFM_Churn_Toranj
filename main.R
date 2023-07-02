@@ -114,3 +114,8 @@ colnames(M_Init_DF)[1] = "code_melli"
 
 rm(DF_MB,DF_MS,DF_MBS)
 
+
+# RFM labeled DF ----------------------------------------------------------
+
+DF6RFM <- R_Init_DF %>% dplyr::left_join(F_Init_DF) %>% dplyr::left_join(M_Init_DF)
+
