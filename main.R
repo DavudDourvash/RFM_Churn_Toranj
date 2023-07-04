@@ -119,3 +119,14 @@ rm(DF_MB,DF_MS,DF_MBS)
 
 DF6RFM <- R_Init_DF %>% dplyr::left_join(F_Init_DF) %>% dplyr::left_join(M_Init_DF)
 
+DF6RFM$F_Diff <- DF6RFM$FBuy - DF6RFM$FSell
+# Remove outliers  ---------------------------------------------------------------
+
+# R outliers
+DF6RFM$Routliers <- remove_outliers(DF6RFM$R_Init,0.1, 0.9)
+
+# F outliers
+DF6RFM$FBuyoutliers <- remove_outliers(DF6RFM$FBuy, 0.05, 0.95)
+
+# M outliers
+DF6RFM$Mbuyoutliers <- remove_outliers(DF6RFM$MBuy, 0.05, 0.95)
