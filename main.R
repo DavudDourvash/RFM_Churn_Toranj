@@ -1,7 +1,7 @@
 
 
 # delete all objects
-# rm(list = ls())
+rm(list = ls())
 
 
 mypath = "D:/Dourvash1401/Projects/Mixture/RFM_Repo/RFM_Churn_Toranj/"
@@ -115,18 +115,69 @@ colnames(M_Init_DF)[1] = "code_melli"
 rm(DF_MB,DF_MS,DF_MBS)
 
 
+
 # RFM labeled DF ----------------------------------------------------------
 
 DF6RFM <- R_Init_DF %>% dplyr::left_join(F_Init_DF) %>% dplyr::left_join(M_Init_DF)
-
-DF6RFM$F_Diff <- DF6RFM$FBuy - DF6RFM$FSell
+# DF6RFM$F_Diff <- DF6RFM$FBuy - DF6RFM$FSell
 # Remove outliers  ---------------------------------------------------------------
 
 # R outliers
-DF6RFM$Routliers <- remove_outliers(DF6RFM$R_Init,0.1, 0.9)
+# DF6RFM$Routliers <- remove_outliers(DF6RFM$R_Init,0.1, 0.9)
 
 # F outliers
-DF6RFM$FBuyoutliers <- remove_outliers(DF6RFM$FBuy, 0.05, 0.95)
+# DF6RFM$FBuyoutliers <- remove_outliers(DF6RFM$FBuy, 0.05, 0.95)
 
 # M outliers
-DF6RFM$Mbuyoutliers <- remove_outliers(DF6RFM$MBuy, 0.05, 0.95)
+# DF6RFM$Mbuyoutliers <- remove_outliers(DF6RFM$MBuy, 0.05, 0.95)
+
+
+
+# Normal Scoring ----------------------------------------------------------
+
+
+DF6RFM$R_Norm <- (DF6RFM$R_Init - min(DF6RFM$R_Init, na.rm = T)) / (max(DF6RFM$R_Init, na.rm = T) - min(DF6RFM$R_Init, na.rm = T))
+
+DF6RFM$RNormscore = ifelse(DF6RFM$R_Norm <= 0.2, 1, ifelse(DF6RFM$R_Norm > 0.2 & DF6RFM$R_Norm <= 0.4, 
+                                                       2, ifelse(DF6RFM$R_Norm > 0.4 & DF6RFM$R_Norm <= 0.6, 
+                                                                 3, ifelse(DF6RFM$R_Norm > 0.6 & DF6RFM$R_Norm <= 0.8, 
+                                                                           4, 5))))
+
+
+DF6RFM$F_Norm <- (DF6RFM$FBuy - min(DF6RFM$FBuy, na.rm = T)) / (max(DF6RFM$FBuy, na.rm = T) - min(DF6RFM$FBuy, na.rm = T))
+
+DF6RFM$FNormscore = ifelse(DF6RFM$F_Norm <= 0.2, 1, ifelse(DF6RFM$F_Norm > 0.2 & DF6RFM$F_Norm <= 0.4, 
+                                                       2, ifelse(DF6RFM$F_Norm > 0.4 & DF6RFM$F_Norm <= 0.6, 
+                                                                 3, ifelse(DF6RFM$F_Norm > 0.6 & DF6RFM$F_Norm <= 0.8, 
+                                                                           4, 5))))
+
+DF6RFM$M_Norm <- (DF6RFM$MBuy - min(DF6RFM$MBuy, na.rm = T)) / (max(DF6RFM$MBuy, na.rm = T) - min(DF6RFM$MBuy, na.rm = T))
+
+DF6RFM$MNormscore = ifelse(DF6RFM$M_Norm <= 0.2, 1, ifelse(DF6RFM$M_Norm > 0.2 & DF6RFM$M_Norm <= 0.4, 
+                                                       2, ifelse(DF6RFM$M_Norm > 0.4 & DF6RFM$M_Norm <= 0.6, 
+                                                                 3, ifelse(DF6RFM$M_Norm > 0.6 & DF6RFM$M_Norm <= 0.8, 
+                                                                           4, 5))))
+
+
+# Quantile Scoring --------------------------------------------------------
+
+DF6RFM$RQuantscore = ifelse(DF6RFM$R_Init <= quantile(DF6RFM$R_Init, 0.2),
+                        1, ifelse(DF6RFM$R_Init > quantile(DF6RFM$R_Init, 0.2) & DF6RFM$R_Init <= quantile(DF6RFM$R_Init, 0.4), 
+                                  2, ifelse(DF6RFM$R_Init > quantile(DF6RFM$R_Init, 0.4) & DF6RFM$R_Init <= quantile(DF6RFM$R_Init, 0.6),
+                                            3, ifelse(DF6RFM$R_Init > quantile(DF6RFM$R_Init, 0.6) & DF6RFM$R_Init <= quantile(DF6RFM$R_Init, 0.8), 
+                                                      4, 5))))
+
+
+DF6RFM$FQuantscore = ifelse(DF6RFM$FBuy <= quantile(DF6RFM$FBuy, 0.2),
+                        1, ifelse(DF6RFM$FBuy > quantile(DF6RFM$FBuy, 0.2) & DF6RFM$FBuy <= quantile(DF6RFM$FBuy, 0.4), 
+                                  2, ifelse(DF6RFM$FBuy > quantile(DF6RFM$FBuy, 0.4) & DF6RFM$FBuy <= quantile(DF6RFM$FBuy, 0.6),
+                                            3, ifelse(DF6RFM$FBuy > quantile(DF6RFM$FBuy, 0.6) & DF6RFM$FBuy <= quantile(DF6RFM$FBuy, 0.8), 
+                                                      4, 5))))
+
+
+
+DF6RFM$MQuantscore = ifelse(DF6RFM$MBuy <= quantile(DF6RFM$MBuy, 0.2),
+                        1, ifelse(DF6RFM$MBuy > quantile(DF6RFM$MBuy, 0.2) & DF6RFM$MBuy <= quantile(DF6RFM$MBuy, 0.4), 
+                                                       2, ifelse(DF6RFM$MBuy > quantile(DF6RFM$MBuy, 0.4) & DF6RFM$MBuy <= quantile(DF6RFM$MBuy, 0.6),
+                                                                 3, ifelse(DF6RFM$MBuy > quantile(DF6RFM$MBuy, 0.6) & DF6RFM$MBuy <= quantile(DF6RFM$MBuy, 0.8), 
+                                                                           4, 5))))
