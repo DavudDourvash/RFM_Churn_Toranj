@@ -181,3 +181,23 @@ DF6RFM$MQuantscore = ifelse(DF6RFM$MBuy <= quantile(DF6RFM$MBuy, 0.2),
                                                        2, ifelse(DF6RFM$MBuy > quantile(DF6RFM$MBuy, 0.4) & DF6RFM$MBuy <= quantile(DF6RFM$MBuy, 0.6),
                                                                  3, ifelse(DF6RFM$MBuy > quantile(DF6RFM$MBuy, 0.6) & DF6RFM$MBuy <= quantile(DF6RFM$MBuy, 0.8), 
                                                                            4, 5))))
+
+
+
+# Add Initial Kmeans Parameters ------------------------------------------------------
+
+InitKMDF <- DF6RFM %>% dplyr::select(c(13:15))
+
+set.seed(12345)
+# First Clustering
+InitKM <- kmeans(InitKMDF, 4)
+
+# First Centers
+InitCenters = InitKM$centers %>% as.data.frame()
+InitCenters$Clusters = c("New", "VIP", "Passed", "Churn")
+colnames(InitCenters)[1:3] = c("R", "F", "M")
+
+
+
+
+
