@@ -197,7 +197,13 @@ InitCenters = InitKM$centers %>% as.data.frame()
 InitCenters$Clusters = c("New", "VIP", "Passed", "Churn")
 colnames(InitCenters)[1:3] = c("R", "F", "M")
 
+# save init centers
+# write.csv(InitCenters, file = "D:/Dourvash1401/Projects/Mixture/RFM_Repo/RFM_Churn_Toranj/InitRFMcenters.txt",
+#           fileEncoding = "UCS-2LE")
 
+
+
+# Start to count ----------------------------------------------------------
 
 
 
