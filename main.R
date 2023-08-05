@@ -119,7 +119,9 @@ rm(DF_MB,DF_MS,DF_MBS)
 # RFM labeled DF ----------------------------------------------------------
 
 DF6RFM <- R_Init_DF %>% dplyr::left_join(F_Init_DF) %>% dplyr::left_join(M_Init_DF)
+
 # DF6RFM$F_Diff <- DF6RFM$FBuy - DF6RFM$FSell
+
 # Remove outliers  ---------------------------------------------------------------
 
 # R outliers
@@ -194,22 +196,17 @@ InitKM <- kmeans(InitKMDF, 4)
 
 # First Centers
 InitCenters = InitKM$centers %>% as.data.frame()
-InitCenters$Clusters = c("New", "VIP", "Passed", "Churn")
+InitCenters$Clusters = c("New", "VIP", "Churn", "Passed")
 colnames(InitCenters)[1:3] = c("R", "F", "M")
+InitCenters$timestamp <- Sys.Date()
+InitCenters$period = 1004
+
 
 # save init centers
 # write.csv(InitCenters, file = "D:/Dourvash1401/Projects/Mixture/RFM_Repo/RFM_Churn_Toranj/InitRFMcenters.txt",
 #           fileEncoding = "UCS-2LE")
 
 
+write.csv(InitCenters,file = "www/data/InitCenters.csv", fileEncoding = "UCS-2LE")
 
-# Start to count ----------------------------------------------------------
-
-
-# 11
-# 11
-# 22
-# 22
-# 33
-# 33
 
