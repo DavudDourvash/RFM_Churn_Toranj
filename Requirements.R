@@ -8,10 +8,50 @@
 # set location for persian characters
 Sys.setlocale(locale = "Persian")
 
-# requirement pkgs
-pkgs = c("dplyr", "tidyr", "stringr")
-# load all requirement pkgs
-lapply(pkgs, require, character.only = TRUE)
+libs <- list("bubbles",
+             "openxlsx",
+             "lubridate",
+             "cluster",
+             "data.table",
+             "dplyr",
+             "tidyr",
+             "DT",
+             "dygraphs",
+             "jsonlite",
+             "leaflet",
+             "packcircles",
+             "purrr", 
+             "htmlwidgets",
+             "highcharter",
+             "rCharts",
+             "forecast",
+             "ggiraph",
+             "ggplot2", 
+             "plotly", 
+             "plyr", 
+             "rCharts", 
+             "reshape", 
+             "shiny", 
+             "shinydashboard", 
+             "TTR", 
+             "viridis",
+             "xlsx"
+)
+
+
+
+# Github Libraries
+
+# install uninstalled packages
+# lapply(libs, function(x) if(!require(x, character.only = TRUE)) install.packages(x, dependencies = TRUE))
+
+# load all libraries
+lapply(libs, require, character.only = TRUE)
+
+options(RCHART_LIB = 'nvd3')
+options(digits = 5)
+options(scipen = 999)
+
 
 
 
@@ -38,7 +78,7 @@ DatesMain = c(paste0(rep(Years[1], 6*31), rep(Months[1:6], 31) %>% sort(), rep(D
 
 # Functions ---------------------------------------------------------------
 
-remove_outliers <- function(x, na.rm = TRUE, ...) {
+remove_outliers <- function(x, af, an, na.rm = TRUE, ...) {
   qnt <- quantile(x, probs=c(af, an), na.rm = na.rm, ...)
   H <- 1.5 * IQR(x, na.rm = na.rm)
   y <- x
@@ -46,4 +86,8 @@ remove_outliers <- function(x, na.rm = TRUE, ...) {
   y[x > (qnt[2] + H)] <- NA
   y
 }
+
+
+# service libs requires = c("config","RCurl")
+
 
